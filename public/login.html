@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>KD Motion Login</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at center, #0f1c3f, #020617);
+      color: white;
+    }
+
+    .card {
+      width: 360px;
+      padding: 40px 30px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      text-align: center;
+    }
+
+    .logo {
+      width: 70px;
+      height: 70px;
+      margin: auto;
+      margin-bottom: 15px;
+    }
+
+    .logo img {
+      width: 100%;
+      border-radius: 14px;
+    }
+
+    h2 {
+      margin: 10px 0 5px;
+      font-weight: 600;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: #9ca3af;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      background: #0f172a;
+      color: white;
+      margin-bottom: 15px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(90deg, #22c55e, #06b6d4);
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .msg {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #f87171;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="card">
+
+    <!-- 🔥 LOGO GIF -->
+    <div class="logo">
+      <img src="https://media.giphy.com/media/mmj28tFpUyqnyqoDY2/giphy.gif">
+    </div>
+
+    <h2>KD Motion Control</h2>
+    <div class="subtitle">AI Video Generator</div>
+
+    <input id="email" placeholder="Masukkan Email"
+      onkeydown="if(event.key==='Enter') login()" />
+
+    <button id="btn" onclick="login()">Masuk</button>
+
+    <div class="msg" id="msg"></div>
+
+  </div>
+
+  <script>
+    // 🔥 AUTO REDIRECT kalau sudah login
+    if (localStorage.getItem("kd_login")) {
+      window.location.href = "index.html";
+    }
+
+    async function login() {
+      const email = document.getElementById("email").value;
+      const msg = document.getElementById("msg");
+      const btn = document.getElementById("btn");
+
+      msg.innerText = "";
+      btn.innerText = "Loading...";
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/login', {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email })
+        });
+
+        const data = await res.json();
+
+        if (data.allowed) {
+          localStorage.setItem("kd_login", "true");
+          localStorage.setItem("kd_email", email);
+
+          window.location.href = "index.html";
+        } else {
+          msg.innerText = "Email tidak terdaftar ❌";
+        }
+
+      } catch (err) {
+        msg.innerText = "Server error ❌";
+      }
+
+      btn.innerText = "Masuk";
+      btn.disabled = false;
+    }
+  </script>
+
+</body>
+</html>
